@@ -14,7 +14,7 @@ import java.time.ZoneId;
 // mvn spring-boot:run -Dspring-boot.run.arguments="--batch.schedule.enabled=true"
 
 @Component
-@ConditionalOnProperty(name = "batch.schedular.enabled", havingValue = "true")
+@ConditionalOnProperty(name = "batch.schedule.enabled", havingValue = "true")
 public class NighlyJobSchedular {
 
     private final OrderPartitionJobService  jobService;
@@ -24,7 +24,7 @@ public class NighlyJobSchedular {
         this.jobService = jobService;
     }
 
-    @Scheduled(cron = "${batch.schedular.cron}", zone = "Europe/Istanbul")
+    @Scheduled(cron = "${batch.schedule.cron}", zone = "Europe/Istanbul")
     public void runNightly() throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
         System.out.println("NighlyJobSchedular.runNightly() çalıştı");
 
