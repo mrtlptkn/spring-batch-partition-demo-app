@@ -47,9 +47,9 @@ public class OrderPartitionTasklet implements Tasklet {
         contribution.incrementProcessSkipCount(); // Sayaçlarda manuel 1 adet process işlemi yapıldı yansısın diye yaptık.
         // WHERE order_date -> raporu gönderdiğimiz tarihe göre o günkü müşteri harcamalarının toplamını hesaplayacağız.
         // günlük bir rapor çalıştırığımızı düşünürsek
-        String sqlQuery = "INSERT INTO customer_totals(run_date,customer,partition_name,total_amount) SELECT CAST(? AS DATE), customer, CAST(? AS VARCHAR(50)), SUM(amount) FROM orders WHERE order_id BETWEEN ? AND order_date=CAST(? AS DATE) GROUP BY customer";
+        String sqlQuery = "INSERT INTO customer_totals(run_date,customer,partition_name,total_amount) SELECT CAST(? AS DATE), customer, CAST(? AS VARCHAR(50)), SUM(amount) FROM orders WHERE order_id BETWEEN ? AND ? GROUP BY customer";
 
-        int writeCount =  jdbcTemplate.update(sqlQuery,runDate,partitionName,minId,maxId,runDate);
+        int writeCount =  jdbcTemplate.update(sqlQuery,runDate,partitionName,minId,maxId);
         contribution.incrementWriteCount(writeCount); // Bu partition aralığında toplamda kaç kayıt customer_totals tablosuna yazıldı.
         LOGGER.info("[{}] {} tamamlandı, {} müşteri satırı yazıldı", thread, partitionName, writeCount);
         return RepeatStatus.FINISHED;
