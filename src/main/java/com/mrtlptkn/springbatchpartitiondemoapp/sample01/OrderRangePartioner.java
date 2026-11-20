@@ -12,7 +12,6 @@ import org.springframework.stereotype.Component;
 import java.util.HashMap;
 import java.util.Map;
 
-@Component
 public class OrderRangePartioner implements Partitioner {
 
     // Önce min Max Id değerlerini bularak ne kadarlık bir veri kümesi var bulalım
