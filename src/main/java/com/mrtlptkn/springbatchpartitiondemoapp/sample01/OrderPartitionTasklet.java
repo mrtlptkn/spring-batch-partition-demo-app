@@ -28,6 +28,9 @@ public class OrderPartitionTasklet implements Tasklet {
     @Value("#{jobParameters['runDate']}")
     private String runDate;
 
+    @Value("#{jobParameters['failPartitionName']}")
+    private String failPartitionName;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(OrderPartitionTasklet.class);
     private final JdbcTemplate jdbcTemplate;
 
@@ -41,6 +44,10 @@ public class OrderPartitionTasklet implements Tasklet {
 
         String thread = Thread.currentThread().getName();
         LOGGER.info("[{}] {} başladı, id aralığı {}-{}", thread, partitionName, minId, maxId);
+
+        if(partitionName.equals(failPartitionName)){
+            throw new IllegalStateException("Partition " + partitionName + " intentionally failed for testing purposes.");
+        }
 
         // Aynı gün partionlardan birisi başarısız olursa bu durumda bu tabloya aynı hesaplamalar tekrar atılabilir bunu sağlamak için chunk oriented yapı kullanmadığımız için tasklet bu chunkları yönetimini chunk gibi yapamdığından dolayı veriyi silip tekrar insert etmezsek sıkıntı yaşarız.
         jdbcTemplate.update("DELETE FROM customer_totals WHERE run_date = ? AND partition_name = ?", runDate, partitionName);

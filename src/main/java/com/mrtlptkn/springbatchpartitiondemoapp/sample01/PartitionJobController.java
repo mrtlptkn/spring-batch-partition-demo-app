@@ -17,21 +17,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/v1/partition-job")
 public class PartitionJobController {
 
-    private final JobLauncher jobLauncher;
-    private final Job partitionJob;
+    private final OrderPartitionJobService  jobService;
 
-    public PartitionJobController(JobLauncher jobLauncher, Job partitionJob) {
-        this.jobLauncher = jobLauncher;
-        this.partitionJob = partitionJob;
+    public PartitionJobController(OrderPartitionJobService jobService) {
+        this.jobService = jobService;
     }
 
     @PostMapping
-    public String launchPartitionJob(@RequestParam("runDate") String runDate)
-            throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
-        var params =  new JobParametersBuilder().addString("runDate",runDate).toJobParameters();
-
-          JobExecution ex =  jobLauncher.run(partitionJob,params);
-            return ex.getStatus().toString();
-
+    public String launchPartitionJob(@RequestParam("runDate") String runDate,@RequestParam("failPartitionName") String failPartitionName) throws JobInstanceAlreadyCompleteException, JobExecutionAlreadyRunningException, JobParametersInvalidException, JobRestartException {
+        return jobService.launch(runDate,failPartitionName).getStatus().toString();
     }
 }
